@@ -10,7 +10,7 @@ class PingActor extends Actor with ActorLogging {
   def receive = {
   	case Initialize => 
 	    log.info("In PingActor - starting ping-pong")
-d  }
+  }
 }
 
 object PingActor {
