@@ -1,4 +1,6 @@
-name := """persistent-actors"""
+organization := "info.unterstein"
+
+name := "persistent-actors"
 
 version := "1.0"
 
