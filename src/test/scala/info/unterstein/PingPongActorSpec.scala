@@ -1,4 +1,4 @@
-package com.example
+package info.unterstein
 
 import akka.actor.ActorSystem
 import akka.testkit.{ImplicitSender, TestKit}

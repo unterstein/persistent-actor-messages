@@ -1,4 +1,4 @@
-package com.example
+package info.unterstein
 
 import akka.actor.{Actor, ActorLogging, Props}
 
