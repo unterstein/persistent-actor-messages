@@ -9,7 +9,7 @@ class PingPongActorSpec(_system: ActorSystem) extends TestKit(_system) with Impl
  
   def this() = this(ActorSystem("MySpec"))
  
-  override def afterAll {
+  override def afterAll() {
     TestKit.shutdownActorSystem(system)
   }
  
