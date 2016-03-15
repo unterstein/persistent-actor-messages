@@ -15,6 +15,9 @@ trait ElasticSearchClientWrapper {
 
   def close(): Unit
 
+}
+
+object ElasticSearchClientWrapper {
   // TODO maybe DI is a better solution..
   def getByConfiguration: ElasticSearchClientWrapper = if("remote" == ConfigFactory.load().getString("elastic.mode")) new RemoteElasticSearchClientWrapper() else new EmbeddedElasticSearchClientWrapper()
 }
