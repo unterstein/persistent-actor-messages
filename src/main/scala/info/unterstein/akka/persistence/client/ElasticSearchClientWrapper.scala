@@ -1,6 +1,7 @@
 package info.unterstein.akka.persistence.client
 
 import com.sksamuel.elastic4s.ElasticClient
+import com.typesafe.config.ConfigFactory
 import org.elasticsearch.client.Client
 
 /**
@@ -13,4 +14,7 @@ trait ElasticSearchClientWrapper {
   def scalaClient: ElasticClient = ElasticClient.fromClient(client)
 
   def close(): Unit
+
+  // TODO maybe DI is a better solution..
+  def getByConfiguration: ElasticSearchClientWrapper = if("remote" == ConfigFactory.load().getString("elastic.mode")) new RemoteElasticSearchClientWrapper() else new EmbeddedElasticSearchClientWrapper()
 }
