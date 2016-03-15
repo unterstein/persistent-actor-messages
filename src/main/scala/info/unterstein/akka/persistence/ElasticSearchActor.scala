@@ -1,4 +1,4 @@
-package info.unterstein
+package info.unterstein.akka.persistence
 
 import akka.actor.{Actor, ActorLogging, Props}
 
