@@ -3,7 +3,10 @@ package info.unterstein.akka.persistence
 import akka.actor.ActorSystem
 import akka.testkit.{ImplicitSender, TestKit}
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
- 
+
+/**
+ * @author Johannes Unterstein (unterstein@me.com)
+ */
 class PingPongActorSpec(_system: ActorSystem) extends TestKit(_system) with ImplicitSender
   with WordSpecLike with Matchers with BeforeAndAfterAll {
  

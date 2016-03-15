@@ -2,6 +2,9 @@ package info.unterstein.akka.persistence
 
 import akka.actor.{Actor, ActorLogging, Props}
 
+/**
+  * @author Johannes Unterstein (unterstein@me.com)
+  */
 class ElasticSearchActor extends Actor with ActorLogging {
   import ElasticSearchActor._
 
