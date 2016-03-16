@@ -2,7 +2,9 @@ package info.unterstein.akka.persistence
 
 import akka.actor.ActorSystem
 import akka.testkit.{ImplicitSender, TestKit}
+import info.unterstein.akka.persistence.ElasticSearchActor.InitializedMessage
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
+import scala.concurrent.duration._
 
 /**
  * @author Johannes Unterstein (unterstein@me.com)
@@ -10,17 +12,17 @@ import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
 class ElasticSearchActorSpec(_system: ActorSystem) extends TestKit(_system) with ImplicitSender
   with WordSpecLike with Matchers with BeforeAndAfterAll {
  
-  def this() = this(ActorSystem("MySpec"))
+  def this() = this(ActorSystem("ElasticSearchActorSpec"))
  
   override def afterAll() {
     TestKit.shutdownActorSystem(system)
   }
  
-  "A Ping actor" must {
-    "send back a ping on a pong" in {
-      val pingActor = system.actorOf(ElasticSearchActor.props)
-      pingActor ! "ping"
-      expectMsg("pong")
+  "An ElasticSearchActor actor" must {
+    "must have a client" in {
+      val elasticSearchActor = system.actorOf(ElasticSearchActor.props)
+      elasticSearchActor ! InitializedMessage()
+      expectMsg(20 seconds, true)
     }
   }
 

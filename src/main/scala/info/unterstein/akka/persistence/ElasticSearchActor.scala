@@ -1,6 +1,7 @@
 package info.unterstein.akka.persistence
 
 import akka.actor.{Actor, ActorLogging, Props}
+import info.unterstein.akka.persistence.client.ElasticSearchClientWrapper
 
 /**
   * @author Johannes Unterstein (unterstein@me.com)
@@ -8,15 +9,19 @@ import akka.actor.{Actor, ActorLogging, Props}
 class ElasticSearchActor extends Actor with ActorLogging {
   import ElasticSearchActor._
 
-  var counter = 0
+  val client = ElasticSearchClientWrapper.getByConfiguration
 
   def receive = {
-  	case obj: Any=>
-	    log.info("In PingActor - starting ping-pong")
-      sender ! "pong"
+  	case s: InitializedMessage =>
+      sender ! (client.client != null)
   }
 }
 
 object ElasticSearchActor {
+
+  case class InitializedMessage()
+
+  case class StoreMessage()
+
   def props = Props[ElasticSearchActor]
 }
