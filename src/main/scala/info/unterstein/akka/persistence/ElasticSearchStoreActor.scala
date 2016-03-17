@@ -47,7 +47,7 @@ class ElasticSearchStoreActor extends Actor with ActorLogging {
         sender ! StoreFailMessage(null)
       }
     case other: Any =>
-      self.tell(StoreMessage(other), sender
+      self.tell(StoreMessage(other), sender)
   }
 
 }
