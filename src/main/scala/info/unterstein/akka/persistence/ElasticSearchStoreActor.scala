@@ -1,6 +1,7 @@
 package info.unterstein.akka.persistence
 
 import akka.actor.{Actor, ActorLogging, Props}
+import com.sksamuel.elastic4s.source.Indexable
 import info.unterstein.akka.persistence.api.PersistentActorElasticSearchMessage
 import info.unterstein.akka.persistence.client.ElasticSearchClientWrapper
 
@@ -10,8 +11,13 @@ import info.unterstein.akka.persistence.client.ElasticSearchClientWrapper
 class ElasticSearchStoreActor extends Actor with ActorLogging {
   import ElasticSearchStoreActor._
   import com.sksamuel.elastic4s.ElasticDsl._
+  import scala.concurrent.ExecutionContext.Implicits.global
 
   val client = ElasticSearchClientWrapper.getByConfiguration
+
+  implicit object CharacterIndexable extends Indexable[PersistentActorElasticSearchMessage] {
+    override def json(persistentMessage: PersistentActorElasticSearchMessage): String = PersistentActorElasticSearchMessage.toJson(persistentMessage)
+  }
 
   def receive = {
   	case message: InitializedMessage =>
