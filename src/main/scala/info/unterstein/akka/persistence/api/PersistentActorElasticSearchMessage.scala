@@ -10,7 +10,7 @@ import scala.collection.JavaConverters._
 /**
   * @author Johannes Unterstein (unterstein@me.com)
   */
-case class PersistentActorElasticSearchMessage(id: Long, message: Any)
+case class PersistentActorElasticSearchMessage(id: String, message: Any)
 
 object PersistentActorElasticSearchMessage {
 
