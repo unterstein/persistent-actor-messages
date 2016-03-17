@@ -22,7 +22,7 @@ class ElasticSearchActorSpec(_system: ActorSystem) extends TestKit(_system) with
     "must have a client" in {
       val elasticSearchActor = system.actorOf(ElasticSearchStoreActor.props)
       elasticSearchActor ! InitializedMessage()
-      expectMsg(20 seconds, true)
+      expectMsg(true)
     }
   }
 
@@ -30,7 +30,7 @@ class ElasticSearchActorSpec(_system: ActorSystem) extends TestKit(_system) with
     "must store a StoreMessage in ElasticSearch" in {
       val elasticSearchActor = system.actorOf(ElasticSearchStoreActor.props)
       elasticSearchActor ! StoreMessage("test")
-      expectMsg(20 seconds, StoreSuccessMessage)
+      expectMsgAllClassOf(classOf[StoreSuccessMessage])
     }
   }
 

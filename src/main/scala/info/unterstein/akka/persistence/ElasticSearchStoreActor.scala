@@ -1,9 +1,12 @@
 package info.unterstein.akka.persistence
 
+import java.util.UUID
+
 import akka.actor.{Actor, ActorLogging, Props}
 import com.sksamuel.elastic4s.source.Indexable
 import info.unterstein.akka.persistence.api.PersistentActorElasticSearchMessage
 import info.unterstein.akka.persistence.client.ElasticSearchClientWrapper
+import org.elasticsearch.action.index.IndexRequest
 
 /**
   * @author Johannes Unterstein (unterstein@me.com)
@@ -15,29 +18,35 @@ class ElasticSearchStoreActor extends Actor with ActorLogging {
 
   val client = ElasticSearchClientWrapper.getByConfiguration
 
-  implicit object CharacterIndexable extends Indexable[PersistentActorElasticSearchMessage] {
-    override def json(persistentMessage: PersistentActorElasticSearchMessage): String = PersistentActorElasticSearchMessage.toJson(persistentMessage)
-  }
-
   def receive = {
   	case message: InitializedMessage =>
       sender ! (client.client != null)
     case StoreMessage(originalMessage: Any) =>
-      val indexResult = client.scalaClient.execute {
-        index into "akka-messages" source new PersistentActorElasticSearchMessage(null, originalMessage)
+//      val indexResult = client.scalaClient.execute {
+//        index into "akka" / "messages" id UUID.randomUUID.toString.replace("-", "") fields (
+//          "message" -> PersistentActorElasticSearchMessage.toJson(PersistentActorElasticSearchMessage(originalMessage))
+//          )
+//      }
+//      indexResult.onComplete {
+//        result =>
+//          if(result.isSuccess) {
+//            sender ! StoreSuccessMessage(result.get.id)
+//          } else {
+//            sender ! StoreFailMessage
+//          }
+//      }
+//      indexResult.onFailure {
+//        case exception: Throwable => sender ! StoreFailMessage(exception)
+//      }
+      val indexRequest = new IndexRequest("akka", "messages")
+      indexRequest.source(PersistentActorElasticSearchMessage.toJson(PersistentActorElasticSearchMessage(originalMessage)))
+      val result = client.client.index(indexRequest)
+      if(result.get().isCreated) {
+        sender ! StoreSuccessMessage(result.get().getId)
+      } else {
+        sender ! StoreFailMessage(null)
       }
-      indexResult.onComplete {
-        result =>
-          if(result.isSuccess) {
-            sender ! StoreSuccessMessage(result.get.id)
-          } else {
-            sender ! StoreFailMessage
-          }
-      }
-      indexResult.onFailure {
-        case exception: Throwable => sender ! StoreFailMessage(exception)
-        case o_O: Any => throw new RuntimeException(o_O)
-      }
+
   }
 
 }
