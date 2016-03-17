@@ -10,6 +10,7 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-actor" % "2.3.14",
   "com.typesafe.akka" %% "akka-slf4j" % "2.3.14",
   "ch.qos.logback" % "logback-classic" % "1.1.6",
+  "com.google.code.gson" % "gson" % "2.6.2",
   // DI
 //  "com.google.inject" % "guice" % "4.0",
   // elasticsearch
