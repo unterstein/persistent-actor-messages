@@ -6,8 +6,8 @@ import info.unterstein.akka.persistence.client.ElasticSearchClientWrapper
 /**
   * @author Johannes Unterstein (unterstein@me.com)
   */
-class ElasticSearchActor extends Actor with ActorLogging {
-  import ElasticSearchActor._
+class ElasticSearchStoreActor extends Actor with ActorLogging {
+  import ElasticSearchStoreActor._
 
   val client = ElasticSearchClientWrapper.getByConfiguration
 
@@ -17,11 +17,11 @@ class ElasticSearchActor extends Actor with ActorLogging {
   }
 }
 
-object ElasticSearchActor {
+object ElasticSearchStoreActor {
 
   case class InitializedMessage()
 
   case class StoreMessage()
 
-  def props = Props[ElasticSearchActor]
+  def props = Props[ElasticSearchStoreActor]
 }

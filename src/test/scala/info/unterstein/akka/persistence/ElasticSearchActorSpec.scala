@@ -2,7 +2,7 @@ package info.unterstein.akka.persistence
 
 import akka.actor.ActorSystem
 import akka.testkit.{ImplicitSender, TestKit}
-import info.unterstein.akka.persistence.ElasticSearchActor.InitializedMessage
+import info.unterstein.akka.persistence.ElasticSearchStoreActor.InitializedMessage
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
 import scala.concurrent.duration._
 
@@ -20,7 +20,7 @@ class ElasticSearchActorSpec(_system: ActorSystem) extends TestKit(_system) with
  
   "An ElasticSearchActor actor" must {
     "must have a client" in {
-      val elasticSearchActor = system.actorOf(ElasticSearchActor.props)
+      val elasticSearchActor = system.actorOf(ElasticSearchStoreActor.props)
       elasticSearchActor ! InitializedMessage()
       expectMsg(20 seconds, true)
     }
