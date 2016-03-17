@@ -35,7 +35,8 @@ class ElasticSearchStoreActor extends Actor with ActorLogging {
           }
       }
       indexResult.onFailure {
-        case exception: Exception => sender ! StoreFailMessage(exception)
+        case exception: Throwable => sender ! StoreFailMessage(exception)
+        case o_O: Any => throw new RuntimeException(o_O)
       }
   }
 
@@ -49,7 +50,7 @@ object ElasticSearchStoreActor {
 
   case class StoreSuccessMessage(id: String)
 
-  case class StoreFailMessage(exception: Exception)
+  case class StoreFailMessage(exception: Throwable)
 
   def props = Props[ElasticSearchStoreActor]
 }
