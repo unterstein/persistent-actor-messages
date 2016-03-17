@@ -8,6 +8,9 @@ import info.unterstein.akka.persistence.api.PersistentActorElasticSearchMessage
 import info.unterstein.akka.persistence.client.ElasticSearchClientWrapper
 import org.elasticsearch.action.index.IndexRequest
 
+import scala.concurrent.Await
+import scala.concurrent.duration.Duration
+
 /**
   * @author Johannes Unterstein (unterstein@me.com)
   */
@@ -22,11 +25,11 @@ class ElasticSearchStoreActor extends Actor with ActorLogging {
   	case message: InitializedMessage =>
       sender ! (client.client != null)
     case StoreMessage(originalMessage: Any) =>
-//      val indexResult = client.scalaClient.execute {
-//        index into "akka" / "messages" id UUID.randomUUID.toString.replace("-", "") fields (
-//          "message" -> PersistentActorElasticSearchMessage.toJson(PersistentActorElasticSearchMessage(originalMessage))
-//          )
-//      }
+      val indexResult = client.scalaClient.execute {
+        index into "akka2" / "messages" id UUID.randomUUID.toString.replace("-", "") fields (
+          "message" -> originalMessage
+          )
+      }
 //      indexResult.onComplete {
 //        result =>
 //          if(result.isSuccess) {
@@ -35,17 +38,9 @@ class ElasticSearchStoreActor extends Actor with ActorLogging {
 //            sender ! StoreFailMessage
 //          }
 //      }
-//      indexResult.onFailure {
-//        case exception: Throwable => sender ! StoreFailMessage(exception)
-//      }
-      val indexRequest = new IndexRequest("akka", "messages")
-      indexRequest.source(PersistentActorElasticSearchMessage.toJson(PersistentActorElasticSearchMessage(originalMessage)))
-      val result = client.client.index(indexRequest)
-      if(result.get().isCreated) {
-        sender ! StoreSuccessMessage(result.get().getId)
-      } else {
-        sender ! StoreFailMessage(null)
-      }
+      val result = Await.result(indexResult, Duration.Inf)
+      sender ! StoreSuccessMessage(result.id)
+
     case other: Any =>
       self.tell(StoreMessage(other), sender)
   }
