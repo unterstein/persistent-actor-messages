@@ -29,7 +29,7 @@ class ElasticSearchActorSpec(_system: ActorSystem) extends TestKit(_system) with
   "An ElasticSearchActor actor" must {
     "must store a StoreMessage in ElasticSearch" in {
       val elasticSearchActor = system.actorOf(ElasticSearchStoreActor.props)
-      elasticSearchActor ! StoreMessage("test")
+      elasticSearchActor ! StoreMessage(messageType = "test", originalMessage = "test")
       expectMsgAllClassOf(classOf[StoreSuccessMessage])
     }
   }

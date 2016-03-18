@@ -19,10 +19,10 @@ class ElasticSearchStoreActor extends Actor with ActorLogging {
   def receive = {
   	case message: InitializedMessage =>
       sender ! (client.client != null)
-    case StoreMessage(originalMessage: Any) =>
+    case message: StoreMessage =>
       val indexResult = client.scalaClient.execute {
-        index into "akka2" / "messages" id UUID.randomUUID.toString.replace("-", "") fields (
-          "message" -> originalMessage
+        index into "akka-messages" / message.messageType id UUID.randomUUID.toString.replace("-", "") fields (
+          "message" -> message.originalMessage
           )
       }
       val originalSender = sender
@@ -30,17 +30,17 @@ class ElasticSearchStoreActor extends Actor with ActorLogging {
         case Success(result) => originalSender ! StoreSuccessMessage(result.getId)
         case Failure(exception) => originalSender ! StoreFailMessage(exception)
       }
-    case other: Any =>
-      self.tell(StoreMessage(other), sender)
+    case other => sender ! NotUnderstandable()
   }
-
 }
 
 object ElasticSearchStoreActor {
 
   case class InitializedMessage()
 
-  case class StoreMessage(originalMessage: Any)
+  case class StoreMessage(messageType: String, originalMessage: Any)
+
+  case class NotUnderstandable()
 
   case class StoreSuccessMessage(id: String)
 
