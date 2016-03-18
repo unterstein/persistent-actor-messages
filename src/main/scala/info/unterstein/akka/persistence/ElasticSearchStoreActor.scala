@@ -10,6 +10,7 @@ import org.elasticsearch.action.index.IndexRequest
 
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
+import scala.util.{Failure, Success}
 
 /**
   * @author Johannes Unterstein (unterstein@me.com)
@@ -30,17 +31,11 @@ class ElasticSearchStoreActor extends Actor with ActorLogging {
           "message" -> originalMessage
           )
       }
-//      indexResult.onComplete {
-//        result =>
-//          if(result.isSuccess) {
-//            sender ! StoreSuccessMessage(result.get.id)
-//          } else {
-//            sender ! StoreFailMessage
-//          }
-//      }
-      val result = Await.result(indexResult, Duration.Inf)
-      sender ! StoreSuccessMessage(result.id)
-
+      val originalSender = sender
+      indexResult onComplete {
+        case Success(result) => originalSender ! StoreSuccessMessage(result.getId)
+        case Failure(exception) => originalSender ! StoreFailMessage(exception)
+      }
     case other: Any =>
       self.tell(StoreMessage(other), sender)
   }
