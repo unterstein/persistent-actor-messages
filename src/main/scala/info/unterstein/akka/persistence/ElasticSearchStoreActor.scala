@@ -3,13 +3,7 @@ package info.unterstein.akka.persistence
 import java.util.UUID
 
 import akka.actor.{Actor, ActorLogging, Props}
-import com.sksamuel.elastic4s.source.Indexable
-import info.unterstein.akka.persistence.api.PersistentActorElasticSearchMessage
 import info.unterstein.akka.persistence.client.ElasticSearchClientWrapper
-import org.elasticsearch.action.index.IndexRequest
-
-import scala.concurrent.Await
-import scala.concurrent.duration.Duration
 import scala.util.{Failure, Success}
 
 /**
