@@ -1,4 +1,5 @@
-activator-akka-scala-seed
-=========================
+# persistent-actor-messages
 
-A minimal seed template for an Akka with Scala build 
+## test
+for embedded testing, use -Xmx2g
+sbt -J-Xmx2g test
