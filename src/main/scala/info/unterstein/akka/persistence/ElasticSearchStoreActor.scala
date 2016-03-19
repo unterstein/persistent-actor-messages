@@ -21,7 +21,7 @@ class ElasticSearchStoreActor extends Actor with ActorLogging {
       sender ! (client.client != null)
     case message: StoreMessage =>
       val indexResult = client.scalaClient.execute {
-        index into "akka-messages" / message.messageType id UUID.randomUUID.toString.replace("-", "") fields (
+        index into ElasticSearchClientWrapper.messageIndex / message.messageType id UUID.randomUUID.toString.replace("-", "") fields (
           "message" -> message.originalMessage
           )
       }
