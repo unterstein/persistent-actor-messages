@@ -3,7 +3,11 @@ package info.unterstein.akka.persistence
 import akka.actor.ActorSystem
 import akka.testkit.{ImplicitSender, TestKit}
 import info.unterstein.akka.persistence.ElasticSearchStoreActor.{StoreSuccessMessage, StoreMessage, InitializedMessage}
+import info.unterstein.akka.persistence.client.ElasticSearchClientWrapper
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
+import com.sksamuel.elastic4s.ElasticDsl._
+
+import scala.concurrent.Await
 import scala.concurrent.duration._
 
 /**
@@ -13,7 +17,11 @@ class ElasticSearchActorSpec(_system: ActorSystem) extends TestKit(_system) with
   with WordSpecLike with Matchers with BeforeAndAfterAll {
  
   def this() = this(ActorSystem("ElasticSearchActorSpec"))
- 
+
+  val cleanIndex = ElasticSearchClientWrapper.getByConfiguration.scalaClient.execute(deleteIndex(ElasticSearchClientWrapper.messageIndex))
+
+  Await.ready(cleanIndex, 2 seconds)
+
   override def afterAll() {
     TestKit.shutdownActorSystem(system)
   }
