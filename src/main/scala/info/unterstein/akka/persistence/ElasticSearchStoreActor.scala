@@ -5,14 +5,14 @@ import java.util.UUID
 import akka.actor.{Actor, ActorLogging, Props}
 import info.unterstein.akka.persistence.client.ElasticSearchClientWrapper
 import scala.util.{Failure, Success}
+import ElasticSearchStoreActor._
+import com.sksamuel.elastic4s.ElasticDsl._
+import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
   * @author Johannes Unterstein (unterstein@me.com)
   */
 class ElasticSearchStoreActor extends Actor with ActorLogging {
-  import ElasticSearchStoreActor._
-  import com.sksamuel.elastic4s.ElasticDsl._
-  import scala.concurrent.ExecutionContext.Implicits.global
 
   val client = ElasticSearchClientWrapper.getByConfiguration
 
