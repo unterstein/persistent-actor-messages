@@ -6,7 +6,7 @@ import info.unterstein.akka.persistence.client.ElasticSearchClientWrapper
 /**
   * @author Johannes Unterstein (unterstein@me.com)
   */
-class ElasticSearchConsumeActor extends Actor with ActorLogging {
+class ElasticSearchLoadActor extends Actor with ActorLogging {
 
   val client = ElasticSearchClientWrapper.getByConfiguration
 
