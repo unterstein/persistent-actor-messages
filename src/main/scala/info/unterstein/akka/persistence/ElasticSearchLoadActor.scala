@@ -16,7 +16,6 @@ class ElasticSearchLoadActor extends Actor with ActorLogging {
   val client = ElasticSearchClientWrapper.getByConfiguration
 
   def receive = {
-    case message: Any =>
     case message: InitializedMessage =>
       sender ! (client.client != null)
     case message: LoadMessage =>
