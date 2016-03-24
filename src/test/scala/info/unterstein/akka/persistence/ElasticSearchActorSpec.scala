@@ -55,7 +55,6 @@ class ElasticSearchActorSpec(_system: ActorSystem) extends TestKit(_system) with
     "must load a previsouly stored message" in {
       val storeActor = system.actorOf(ElasticSearchStoreActor.props)
       storeActor ! StoreMessage(messageType = "test", originalMessage = "test")
-      expectMsgAllClassOf(classOf[StoreSuccessMessage])
       val msg = receiveOne(2 seconds).asInstanceOf[StoreSuccessMessage]
 
       val loadActor = system.actorOf(ElasticSearchLoadActor.props)
