@@ -4,6 +4,7 @@ import akka.actor.{Props, ActorLogging, Actor}
 import com.sksamuel.elastic4s.ElasticDsl._
 import info.unterstein.akka.persistence.client.ElasticSearchClientWrapper
 import ElasticSearchLoadActor._
+import scala.concurrent.ExecutionContext.Implicits.global
 
 import scala.util.{Failure, Success}
 
