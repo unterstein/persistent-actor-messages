@@ -1,7 +1,11 @@
 package info.unterstein.akka.persistence
 
 import akka.actor.{Props, ActorLogging, Actor}
+import com.sksamuel.elastic4s.ElasticDsl.index
 import info.unterstein.akka.persistence.client.ElasticSearchClientWrapper
+import ElasticSearchLoadActor._
+
+import scala.util.{Failure, Success}
 
 /**
   * @author Johannes Unterstein (unterstein@me.com)
@@ -12,7 +16,11 @@ class ElasticSearchLoadActor extends Actor with ActorLogging {
 
   def receive = {
     case message: Any =>
-      log.info(s"received $message")
+    case message: InitializedMessage =>
+      sender ! (client.client != null)
+    case message: LoadMessage =>
+      //
+    case other => sender ! NotUnderstandable()
   }
 }
 
