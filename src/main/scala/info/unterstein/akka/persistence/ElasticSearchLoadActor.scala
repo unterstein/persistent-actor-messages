@@ -1,7 +1,7 @@
 package info.unterstein.akka.persistence
 
 import akka.actor.{Props, ActorLogging, Actor}
-import com.sksamuel.elastic4s.ElasticDsl.index
+import com.sksamuel.elastic4s.ElasticDsl._
 import info.unterstein.akka.persistence.client.ElasticSearchClientWrapper
 import ElasticSearchLoadActor._
 
@@ -19,7 +19,14 @@ class ElasticSearchLoadActor extends Actor with ActorLogging {
     case message: InitializedMessage =>
       sender ! (client.client != null)
     case message: LoadMessage =>
-      //
+      val getResult = client.scalaClient.execute {
+       get id message.id from ElasticSearchClientWrapper.messageIndex / message.messageType
+      }
+      val originalSender = sender
+      getResult onComplete {
+        case Success(result) => originalSender ! LoadSuccessMessage(result.getId, result.getField(ElasticSearchClientWrapper.messageFieldName).getValue)
+        case Failure(exception) => originalSender ! LoadFailMessage(exception)
+      }
     case other => sender ! NotUnderstandable()
   }
 }
@@ -32,7 +39,7 @@ object ElasticSearchLoadActor {
 
   case class NotUnderstandable()
 
-  case class LoadSuccessMessage(id: String)
+  case class LoadSuccessMessage(id: String, message: AnyRef)
 
   case class LoadFailMessage(exception: Throwable)
 

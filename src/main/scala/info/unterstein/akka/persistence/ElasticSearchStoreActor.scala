@@ -22,8 +22,8 @@ class ElasticSearchStoreActor extends Actor with ActorLogging {
     case message: StoreMessage =>
       val indexResult = client.scalaClient.execute {
         index into ElasticSearchClientWrapper.messageIndex / message.messageType id UUID.randomUUID.toString.replace("-", "") fields (
-          "message" -> message.originalMessage
-          )
+          ElasticSearchClientWrapper.messageFieldName -> message.originalMessage
+        )
       }
       val originalSender = sender
       indexResult onComplete {
@@ -38,7 +38,7 @@ object ElasticSearchStoreActor {
 
   case class InitializedMessage()
 
-  case class StoreMessage(messageType: String, originalMessage: Any)
+  case class StoreMessage(messageType: String, originalMessage: AnyRef)
 
   case class NotUnderstandable()
 

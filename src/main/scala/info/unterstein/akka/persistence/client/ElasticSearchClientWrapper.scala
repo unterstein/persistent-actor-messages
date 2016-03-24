@@ -21,6 +21,8 @@ object ElasticSearchClientWrapper {
 
   val messageIndex = "akka-messages"
 
+  val messageFieldName = "message"
+
   // TODO maybe DI is a better solution..
   private val client = if("remote" == ConfigFactory.load().getString("elastic.mode")) new RemoteElasticSearchClientWrapper() else new EmbeddedElasticSearchClientWrapper()
 
