@@ -24,7 +24,9 @@ class ElasticSearchLoadActor extends Actor with ActorLogging {
       }
       val originalSender = sender
       getResult onComplete {
-        case Success(result) => originalSender ! LoadSuccessMessage(result.getId, result.getField(ElasticSearchClientWrapper.messageFieldName).getValue)
+        case Success(result) => {
+          originalSender ! LoadSuccessMessage(result.getId, result.source.get(ElasticSearchClientWrapper.messageFieldName))
+        }
         case Failure(exception) => originalSender ! LoadFailMessage(exception)
       }
     case other => sender ! NotUnderstandable()
