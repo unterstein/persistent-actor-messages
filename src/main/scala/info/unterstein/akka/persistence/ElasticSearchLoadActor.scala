@@ -1,6 +1,6 @@
 package info.unterstein.akka.persistence
 
-import akka.actor.{ActorLogging, Actor}
+import akka.actor.{Props, ActorLogging, Actor}
 import info.unterstein.akka.persistence.client.ElasticSearchClientWrapper
 
 /**
@@ -16,3 +16,17 @@ class ElasticSearchLoadActor extends Actor with ActorLogging {
   }
 }
 
+object ElasticSearchLoadActor {
+
+  case class InitializedMessage()
+
+  case class LoadMessage(messageType: String, id: String)
+
+  case class NotUnderstandable()
+
+  case class LoadSuccessMessage(id: String)
+
+  case class LoadFailMessage(exception: Throwable)
+
+  def props = Props[ElasticSearchLoadActor]
+}
