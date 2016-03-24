@@ -2,6 +2,7 @@ package info.unterstein.akka.persistence
 
 import akka.actor.ActorSystem
 import akka.testkit.{ImplicitSender, TestKit}
+import info.unterstein.akka.persistence.ElasticSearchLoadActor.{LoadSuccessMessage, LoadMessage}
 import info.unterstein.akka.persistence.ElasticSearchStoreActor.{StoreSuccessMessage, StoreMessage, InitializedMessage}
 import info.unterstein.akka.persistence.client.ElasticSearchClientWrapper
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
@@ -28,25 +29,38 @@ class ElasticSearchActorSpec(_system: ActorSystem) extends TestKit(_system) with
  
   "An ElasticSearchStoreActor actor" must {
     "must have a client" in {
-      val elasticSearchActor = system.actorOf(ElasticSearchStoreActor.props)
-      elasticSearchActor ! ElasticSearchStoreActor.InitializedMessage()
+      val storeActor = system.actorOf(ElasticSearchStoreActor.props)
+      storeActor ! ElasticSearchStoreActor.InitializedMessage()
       expectMsg(true)
     }
   }
 
   "An ElasticSearchStoreActor actor" must {
     "must store a StoreMessage in ElasticSearch" in {
-      val elasticSearchActor = system.actorOf(ElasticSearchStoreActor.props)
-      elasticSearchActor ! StoreMessage(messageType = "test", originalMessage = "test")
+      val storeActor = system.actorOf(ElasticSearchStoreActor.props)
+      storeActor ! StoreMessage(messageType = "test", originalMessage = "test")
       expectMsgAllClassOf(classOf[StoreSuccessMessage])
     }
   }
 
   "An ElasticSearchLoadActor actor" must {
     "must have a client" in {
-      val elasticSearchActor = system.actorOf(ElasticSearchLoadActor.props)
-      elasticSearchActor ! ElasticSearchLoadActor.InitializedMessage()
+      val loadActor = system.actorOf(ElasticSearchLoadActor.props)
+      loadActor ! ElasticSearchLoadActor.InitializedMessage()
       expectMsg(true)
+    }
+  }
+
+  "An ElasticSearchLoadActor actor" must {
+    "must load a previsouly stored message" in {
+      val storeActor = system.actorOf(ElasticSearchStoreActor.props)
+      storeActor ! StoreMessage(messageType = "test", originalMessage = "test")
+      expectMsgAllClassOf(classOf[StoreSuccessMessage])
+      val msg = receiveOne(2 seconds).asInstanceOf[StoreSuccessMessage]
+
+      val loadActor = system.actorOf(ElasticSearchLoadActor.props)
+      loadActor ! LoadMessage(messageType = "test", id = msg.id)
+      expectMsgAllClassOf(classOf[LoadSuccessMessage])
     }
   }
 
