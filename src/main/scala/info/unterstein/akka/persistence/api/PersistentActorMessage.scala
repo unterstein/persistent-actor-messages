@@ -44,11 +44,11 @@ object PersistentActorMessage {
     }
   }
 
-  def toJson(entity: PersistentActorElasticSearchMessage): String = toJsonAny(entity)
+  def toJson(entity: PersistentActorMessage): String = toJsonAny(entity)
 
   def toJsonAny(entity: Any): String = gson.toJson(entity)
 
-  def fromJson(json: String): PersistentActorElasticSearchMessage = fromJsonAny(json, classOf[PersistentActorElasticSearchMessage])
+  def fromJson(json: String): PersistentActorMessage = fromJsonAny(json, classOf[PersistentActorMessage])
 
   def fromJsonAny[T](json: String, classOf: Class[T]): T = gson.fromJson(json, classOf)
 }
