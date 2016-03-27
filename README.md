@@ -7,3 +7,4 @@ sbt -J-Xmx2g test
 
 ## remote
 for remote testing start an elasticsearch instance with default ports
+
