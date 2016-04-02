@@ -3,10 +3,10 @@ package info.unterstein.akka.persistence.api
 import com.google.gson._
 import java.lang.reflect.Type
 
+import com.google.gson.reflect.TypeToken
 import org.slf4j.LoggerFactory
 
 import scala.collection.JavaConverters._
-import akka.event.Logging
 
 /**
   * @author Johannes Unterstein (unterstein@me.com)
@@ -24,10 +24,15 @@ object PersistentActorMessage {
     .registerTypeAdapter(classOf[Map[String, String]], new MapSerializer())
     .create()
 
-  private class MapSerializer extends JsonSerializer[Map[String, String]] {
+  private class MapSerializer extends JsonSerializer[Map[String, String]] with JsonDeserializer[Map[String, String]] {
 
     override def serialize(src: Map[String, String], typeOfSrc: Type, context: JsonSerializationContext): JsonElement = {
       gson.toJsonTree(src.asJava)
+    }
+
+    override def deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): Map[String, String] = {
+      val result: java.util.Map[String, String] = gson.fromJson(json, new TypeToken[java.util.Map[String, String]](){}.getType)
+      result.asScala.toMap
     }
   }
 
