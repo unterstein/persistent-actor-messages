@@ -23,6 +23,8 @@ object ElasticSearchClientWrapper {
 
   val messageFieldName = "message"
 
+  val scheduleFieldName = "scheduleDate"
+
   // TODO maybe DI is a better solution..
   private val client = if("remote" == ConfigFactory.load().getString("elastic.mode")) new RemoteElasticSearchClientWrapper() else new EmbeddedElasticSearchClientWrapper()
 

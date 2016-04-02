@@ -26,7 +26,7 @@ class ElasticSearchLoadActor extends Actor with ActorLogging {
       val originalSender = sender
       getResult onComplete {
         case Success(result) => {
-          originalSender ! LoadSuccessMessage(result.getId, PersistentActorMessage.ofJson(result.source.get(ElasticSearchClientWrapper.messageFieldName).toString))
+          originalSender ! LoadSuccessMessage(result.getId, PersistentActorMessage.jsonToMap(result.source.get(ElasticSearchClientWrapper.messageFieldName).toString))
         }
         case Failure(exception) => originalSender ! LoadFailMessage(exception)
       }
@@ -42,7 +42,7 @@ object ElasticSearchLoadActor {
 
   case class NotUnderstandable()
 
-  case class LoadSuccessMessage(id: String, message: PersistentActorMessage)
+  case class LoadSuccessMessage(id: String, message: Map[String, String])
 
   case class LoadFailMessage(exception: Throwable)
 

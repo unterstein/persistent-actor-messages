@@ -11,12 +11,11 @@ import scala.collection.JavaConverters._
 /**
   * @author Johannes Unterstein (unterstein@me.com)
   */
-case class PersistentActorMessage(messageType: String, scheduleDate: Long, originalMessage: Map[String, String]) {
-
-  def toJson: String = PersistentActorMessage.gson.toJson(this)
-}
+case class PersistentActorMessage(messageType: String, scheduleDate: Long, originalMessage: Map[String, String])
 
 object PersistentActorMessage {
+
+  private val mapToken = new TypeToken[java.util.Map[String, String]](){}.getType
 
   private val log = LoggerFactory.getLogger(PersistentActorMessage.getClass)
 
@@ -31,18 +30,20 @@ object PersistentActorMessage {
     }
 
     override def deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): Map[String, String] = {
-      val result: java.util.Map[String, String] = gson.fromJson(json, new TypeToken[java.util.Map[String, String]](){}.getType)
+      val result: java.util.Map[String, String] = gson.fromJson(json, mapToken)
       result.asScala.toMap
     }
   }
 
-  def ofJson(json: String): PersistentActorMessage = {
+  def jsonToMap(json: String): Map[String, String] = {
     try {
-      gson.fromJson(json, classOf[PersistentActorMessage])
+      gson.fromJson(json, mapToken)
     } catch {
       case o_O: Exception =>
         log.error("Deserialization failed for " + json, o_O)
         throw new RuntimeException("Deserialization failed!", o_O)
     }
   }
+
+  def mapToJson(map: Map[String, String]): String = gson.toJson(map)
 }
