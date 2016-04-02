@@ -46,5 +46,5 @@ object PersistentActorMessage {
     }
   }
 
-  def mapToJson(map: Map[String, String]): String = gson.toJson(map)
+  def mapToJson(map: Map[String, String]): String = gson.toJson(map.asJava)
 }
