@@ -39,7 +39,7 @@ object ElasticSearchStoreActor {
 
   case class InitializedMessage()
 
-  case class StoreMessage(messageType: String, scheduleDate: Option[Long] = None, originalMessage: Map[String, String])
+  case class StoreMessage(messageType: String, scheduleDate: Long = System.currentTimeMillis(), originalMessage: Map[String, String])
 
   case class NotUnderstandable()
 
