@@ -7,7 +7,10 @@ import scala.collection.JavaConverters._
 /**
   * @author Johannes Unterstein (unterstein@me.com)
   */
-case class PersistentActorMessage(messageType: String, scheduleDate: Option[Long] = None, originalMessage: Map[String, String])
+case class PersistentActorMessage(messageType: String, scheduleDate: Option[Long] = None, originalMessage: Map[String, String]) {
+
+  def toJson: String = PersistentActorMessage.gson.toJson(this)
+}
 
 object PersistentActorMessage {
 
@@ -22,5 +25,5 @@ object PersistentActorMessage {
     }
   }
 
-  def ofJson(json: String) = gson.fromJson(json, classOf[PersistentActorMessage])
+  def ofJson(json: String): PersistentActorMessage = gson.fromJson(json, classOf[PersistentActorMessage])
 }
