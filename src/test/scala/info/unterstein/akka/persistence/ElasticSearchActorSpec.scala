@@ -63,7 +63,7 @@ class ElasticSearchActorSpec(_system: ActorSystem) extends TestKit(_system) with
       val loadAnswer = receiveOne(10 seconds).asInstanceOf[LoadSuccessMessage]
 
       assert(storeAnswer.id == loadAnswer.id)
-      assert(loadAnswer.message.originalMessage == message)
+      assert(loadAnswer.message == message)
     }
   }
 
