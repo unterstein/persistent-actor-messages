@@ -7,7 +7,7 @@ import scala.collection.JavaConverters._
 /**
   * @author Johannes Unterstein (unterstein@me.com)
   */
-case class PersistentActorMessage(messageType: String, scheduleDate: Option[Long] = None, originalMessage: AnyRef)
+case class PersistentActorMessage(messageType: String, scheduleDate: Option[Long] = None, originalMessage: Map[String, String])
 
 object PersistentActorMessage {
 
