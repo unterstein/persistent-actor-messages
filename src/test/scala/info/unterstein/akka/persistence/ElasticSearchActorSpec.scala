@@ -38,7 +38,7 @@ class ElasticSearchActorSpec(_system: ActorSystem) extends TestKit(_system) with
   "An ElasticSearchStoreActor actor" must {
     "must store a StoreMessage in ElasticSearch" in {
       val storeActor = system.actorOf(ElasticSearchStoreActor.props)
-      storeActor ! StoreMessage(messageType = "test", originalMessage = "test")
+      storeActor ! StoreMessage(messageType = "test", originalMessage = Map("value" -> "test"))
       expectMsgAllClassOf(classOf[StoreSuccessMessage])
     }
   }
@@ -53,7 +53,7 @@ class ElasticSearchActorSpec(_system: ActorSystem) extends TestKit(_system) with
 
   "An ElasticSearchLoadActor actor" must {
     "must load a previsouly stored message" in {
-      val message = "test"
+      val message = Map("value" -> "test")
       val storeActor = system.actorOf(ElasticSearchStoreActor.props)
       storeActor ! StoreMessage(messageType = "test", originalMessage = message)
       val storeAnswer = receiveOne(2 seconds).asInstanceOf[StoreSuccessMessage]
@@ -63,7 +63,7 @@ class ElasticSearchActorSpec(_system: ActorSystem) extends TestKit(_system) with
       val loadAnswer = receiveOne(10 seconds).asInstanceOf[LoadSuccessMessage]
 
       assert(storeAnswer.id == loadAnswer.id)
-      assert(loadAnswer.message.message == message)
+      assert(loadAnswer.message.originalMessage == message)
     }
   }
 
