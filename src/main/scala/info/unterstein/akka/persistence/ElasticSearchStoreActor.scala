@@ -3,6 +3,7 @@ package info.unterstein.akka.persistence
 import java.util.UUID
 
 import akka.actor.{Actor, ActorLogging, Props}
+import info.unterstein.akka.persistence.api.PersistentActorMessage
 import info.unterstein.akka.persistence.client.ElasticSearchClientWrapper
 import scala.util.{Failure, Success}
 import ElasticSearchStoreActor._
@@ -22,7 +23,7 @@ class ElasticSearchStoreActor extends Actor with ActorLogging {
     case message: StoreMessage =>
       val indexResult = client.scalaClient.execute {
         index into ElasticSearchClientWrapper.messageIndex / message.messageType id UUID.randomUUID.toString.replace("-", "") fields (
-          ElasticSearchClientWrapper.messageFieldName -> message.originalMessage
+          ElasticSearchClientWrapper.messageFieldName -> PersistentActorMessage(message.messageType, message.scheduleDate, message.originalMessage).toJson
         )
       }
       val originalSender = sender
