@@ -37,7 +37,8 @@ object PersistentActorMessage {
 
   def jsonToMap(json: String): Map[String, String] = {
     try {
-      gson.fromJson(json, mapToken)
+      val result: java.util.Map[String, String] = gson.fromJson(json, mapToken)
+      result.asScala.toMap
     } catch {
       case o_O: Exception =>
         log.error("Deserialization failed for " + json, o_O)
