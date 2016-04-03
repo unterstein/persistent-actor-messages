@@ -40,9 +40,13 @@ object ElasticSearchLoadActor {
 
   case class LoadMessage(messageType: String, id: String)
 
+  case class LoadScheduledMessage(messageType: String)
+
   case class NotUnderstandable()
 
   case class LoadSuccessMessage(id: String, message: Map[String, String])
+
+  case class LoadScheduledSuccessMessage(result: List[LoadSuccessMessage])
 
   case class LoadFailMessage(exception: Throwable)
 
