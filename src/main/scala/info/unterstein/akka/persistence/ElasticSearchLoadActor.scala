@@ -6,6 +6,7 @@ import info.unterstein.akka.persistence.api.PersistentActorMessage
 import info.unterstein.akka.persistence.client.ElasticSearchClientWrapper
 import ElasticSearchLoadActor._
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.collection.JavaConversions._
 
 import scala.util.{Failure, Success}
 
@@ -19,6 +20,23 @@ class ElasticSearchLoadActor extends Actor with ActorLogging {
   def receive = {
     case message: InitializedMessage =>
       sender ! (client.client != null)
+    case message: LoadScheduledMessage =>
+      val searchResult = client.scalaClient.execute {
+        search in ElasticSearchClientWrapper.messageIndex / message.messageType query {
+          rangeQuery(ElasticSearchClientWrapper.scheduleFieldName) from "0" to s"${System.currentTimeMillis()}"
+        }
+      }
+      val originalSender = sender
+      searchResult onComplete {
+        case Success(result) => {
+          val resultList = result.getHits.map {
+            hit =>
+              LoadSuccessMessage(hit.getId, PersistentActorMessage.jsonToMap(hit.getSource.get(ElasticSearchClientWrapper.messageFieldName).toString))
+          }
+          originalSender ! LoadScheduledSuccessMessage(resultList.toList)
+        }
+        case Failure(exception) => originalSender ! LoadFailMessage(exception)
+      }
     case message: LoadMessage =>
       val getResult = client.scalaClient.execute {
        get id message.id from ElasticSearchClientWrapper.messageIndex / message.messageType
