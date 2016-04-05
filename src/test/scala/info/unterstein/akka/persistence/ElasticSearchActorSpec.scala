@@ -52,7 +52,7 @@ class ElasticSearchActorSpec(_system: ActorSystem) extends TestKit(_system) with
   }
 
   "An ElasticSearchLoadActor actor" must {
-    "must load a previsouly stored message" in {
+    "must load a previously stored message" in {
       val message = Map("value" -> "test")
       val storeActor = system.actorOf(ElasticSearchStoreActor.props)
       storeActor ! StoreMessage(messageType = "test", originalMessage = message)
