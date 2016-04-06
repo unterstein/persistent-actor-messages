@@ -21,11 +21,11 @@ class ElasticSearchLoadActor extends Actor with ActorLogging {
     case message: InitializedMessage =>
       sender ! (client.client != null)
     case message: LoadScheduledMessage =>
-      val searchResult = client.scalaClient.execute {
-        search in ElasticSearchClientWrapper.messageIndex / message.messageType query {
-          rangeQuery(ElasticSearchClientWrapper.scheduleFieldName) from 0 to message.scheduleDate
-        }
+      val searchRequest = search in ElasticSearchClientWrapper.messageIndex / message.messageType query {
+        rangeQuery(ElasticSearchClientWrapper.scheduleFieldName) from 0 to message.scheduleDate
       }
+      log.debug(s"Executing search request: $searchRequest")
+      val searchResult = client.scalaClient.execute { searchRequest }
       val originalSender = sender
       searchResult onComplete {
         case Success(result) => {
@@ -41,9 +41,9 @@ class ElasticSearchLoadActor extends Actor with ActorLogging {
         }
       }
     case message: LoadMessage =>
-      val getResult = client.scalaClient.execute {
-       get id message.id from ElasticSearchClientWrapper.messageIndex / message.messageType
-      }
+      val getRequest = get id message.id from ElasticSearchClientWrapper.messageIndex / message.messageType
+      log.debug(s"Executing get request: $getRequest")
+      val getResult = client.scalaClient.execute { getRequest }
       val originalSender = sender
       getResult onComplete {
         case Success(result) => {

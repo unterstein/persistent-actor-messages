@@ -21,11 +21,11 @@ class ElasticSearchStoreActor extends Actor with ActorLogging {
   	case message: InitializedMessage =>
       sender ! (client.client != null)
     case message: StoreMessage =>
-      val indexResult = client.scalaClient.execute {
-        index into ElasticSearchClientWrapper.messageIndex / message.messageType id UUID.randomUUID.toString.replace("-", "") fields (
-          ElasticSearchClientWrapper.messageFieldName -> PersistentActorMessage.mapToJson(message.originalMessage)
+      val indexRequest = index into ElasticSearchClientWrapper.messageIndex / message.messageType id UUID.randomUUID.toString.replace("-", "") fields (
+        ElasticSearchClientWrapper.messageFieldName -> PersistentActorMessage.mapToJson(message.originalMessage)
         )
-      }
+      log.debug(s"Executing index request: $indexRequest")
+      val indexResult = client.scalaClient.execute { indexRequest }
       val originalSender = sender
       indexResult onComplete {
         case Success(result) => originalSender ! StoreSuccessMessage(result.getId)
