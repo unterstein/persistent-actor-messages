@@ -23,7 +23,7 @@ class ElasticSearchLoadActor extends Actor with ActorLogging {
     case message: LoadScheduledMessage =>
       val searchResult = client.scalaClient.execute {
         search in ElasticSearchClientWrapper.messageIndex / message.messageType query {
-          rangeQuery(ElasticSearchClientWrapper.scheduleFieldName) from 0 to System.currentTimeMillis()
+          rangeQuery(ElasticSearchClientWrapper.scheduleFieldName) from 0 to message.scheduleDate
         }
       }
       val originalSender = sender
@@ -64,7 +64,7 @@ object ElasticSearchLoadActor {
 
   case class LoadMessage(messageType: String, id: String)
 
-  case class LoadScheduledMessage(messageType: String)
+  case class LoadScheduledMessage(messageType: String, scheduleDate: Long = System.currentTimeMillis())
 
   case class NotUnderstandable()
 
