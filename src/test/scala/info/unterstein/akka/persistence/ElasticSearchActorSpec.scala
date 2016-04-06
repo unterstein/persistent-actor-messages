@@ -72,7 +72,9 @@ class ElasticSearchActorSpec(_system: ActorSystem) extends TestKit(_system) with
       val message = Map("value" -> "test")
       val storeActor = system.actorOf(ElasticSearchStoreActor.props)
       storeActor ! StoreMessage(messageType = "test", originalMessage = message)
+      expectMsgAllClassOf(classOf[StoreSuccessMessage])
       storeActor ! StoreMessage(messageType = "test", originalMessage = message)
+      expectMsgAllClassOf(classOf[StoreSuccessMessage])
 
       val loadActor = system.actorOf(ElasticSearchLoadActor.props)
       loadActor ! LoadScheduledMessage(messageType = "test")
