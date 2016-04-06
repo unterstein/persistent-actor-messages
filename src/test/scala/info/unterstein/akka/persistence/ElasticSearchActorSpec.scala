@@ -2,7 +2,7 @@ package info.unterstein.akka.persistence
 
 import akka.actor.ActorSystem
 import akka.testkit.{ImplicitSender, TestKit}
-import info.unterstein.akka.persistence.ElasticSearchLoadActor.{LoadSuccessMessage, LoadMessage}
+import info.unterstein.akka.persistence.ElasticSearchLoadActor.{LoadScheduledSuccessMessage, LoadScheduledMessage, LoadSuccessMessage, LoadMessage}
 import info.unterstein.akka.persistence.ElasticSearchStoreActor.{StoreSuccessMessage, StoreMessage, InitializedMessage}
 import info.unterstein.akka.persistence.client.ElasticSearchClientWrapper
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
@@ -64,6 +64,21 @@ class ElasticSearchActorSpec(_system: ActorSystem) extends TestKit(_system) with
 
       assert(storeAnswer.id == loadAnswer.id)
       assert(loadAnswer.message == message)
+    }
+  }
+
+  "An ElasticSearchLoadActor actor" must {
+    "must load all scheduled message" in {
+      val message = Map("value" -> "test")
+      val storeActor = system.actorOf(ElasticSearchStoreActor.props)
+      storeActor ! StoreMessage(messageType = "test", originalMessage = message)
+      storeActor ! StoreMessage(messageType = "test", originalMessage = message)
+
+      val loadActor = system.actorOf(ElasticSearchLoadActor.props)
+      loadActor ! LoadScheduledMessage(messageType = "test")
+      val loadAnswer = receiveOne(10 seconds).asInstanceOf[LoadScheduledSuccessMessage]
+
+      assert(loadAnswer.result.size == 2)
     }
   }
 
