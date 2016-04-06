@@ -35,7 +35,10 @@ class ElasticSearchLoadActor extends Actor with ActorLogging {
           }
           originalSender ! LoadScheduledSuccessMessage(resultList.toList)
         }
-        case Failure(exception) => originalSender ! LoadFailMessage(exception)
+        case Failure(o_O) => {
+          log.error("Unable to load scheduled messages", o_O)
+          originalSender ! LoadFailMessage(o_O)
+        }
       }
     case message: LoadMessage =>
       val getResult = client.scalaClient.execute {
@@ -46,7 +49,10 @@ class ElasticSearchLoadActor extends Actor with ActorLogging {
         case Success(result) => {
           originalSender ! LoadSuccessMessage(result.getId, PersistentActorMessage.jsonToMap(result.source.get(ElasticSearchClientWrapper.messageFieldName).toString))
         }
-        case Failure(exception) => originalSender ! LoadFailMessage(exception)
+        case Failure(o_O) => {
+          log.error(s"Unable to load dedicated message ${message.id}", o_O)
+          originalSender ! LoadFailMessage(o_O)
+        }
       }
     case other => sender ! NotUnderstandable()
   }
