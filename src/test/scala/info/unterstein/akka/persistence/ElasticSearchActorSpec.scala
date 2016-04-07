@@ -76,6 +76,7 @@ class ElasticSearchActorSpec(_system: ActorSystem) extends TestKit(_system) with
       storeActor ! StoreMessage(messageType = "test", originalMessage = message, scheduleDate = 1)
       expectMsgAllClassOf(classOf[StoreSuccessMessage])
 
+      // FIXME not working test
       val loadActor = system.actorOf(ElasticSearchLoadActor.props)
       loadActor ! LoadScheduledMessage(messageType = "test", scheduleDate = 2)
       val loadAnswer = receiveOne(10 seconds).asInstanceOf[LoadScheduledSuccessMessage]
