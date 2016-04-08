@@ -1,4 +1,5 @@
 # persistent-actor-messages
+Akka actors which use persistent messages stored in elasticsearch to communicate
 
 # test
 ## embedded
