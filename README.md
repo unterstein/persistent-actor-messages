@@ -16,3 +16,4 @@ for remote testing start an elasticsearch instance with default ports
 FIXME
 
 # license
+FIXME
